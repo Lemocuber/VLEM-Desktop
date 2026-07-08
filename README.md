@@ -13,8 +13,11 @@ This repo contains the first Desktop client slice:
 - mode/routing controls
 - node list parsing and display
 - Tauri command boundary for native proxy, stop, and delay checks
+- bundled Xray core lookup
+- macOS system proxy mode
+- macOS TUN mode via Xray's `tun` inbound
 
-The native Xray runner, system proxy management, and TUN implementation are intentionally still behind Tauri commands.
+TUN mode requires macOS administrator authorization when starting because Xray must create the TUN interface and route table entries.
 
 ## Development
 
