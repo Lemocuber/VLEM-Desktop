@@ -59,7 +59,7 @@ const setState = (patch: Partial<AppState>) => {
 
 const refreshSubscription = async (forceStopOnLoss = false) => {
   if (!state.apiBase) return setState({ fetchState: 'setup' });
-  setState({ fetchState: 'loading', error: '' });
+  setState({ fetchState: state.fetchState === 'unauthorized' ? 'unauthorized' : 'loading', error: '' });
   try {
     const subscription = await fetchSubscription(state.apiBase, state.clientId);
     if (!subscription) {
@@ -75,7 +75,14 @@ const refreshSubscription = async (forceStopOnLoss = false) => {
       selectedNode: subscription.nodes[0]?.link || ''
     });
   } catch (error) {
-    setState({ fetchState: 'error', error: error instanceof Error ? error.message : 'Fetch failed.' });
+    if (forceStopOnLoss) await stopProxy();
+    setState({
+      fetchState: 'unauthorized',
+      subscription: null,
+      selectedNode: '',
+      error: error instanceof Error ? error.message : 'Load failed.'
+    });
+    startAuthPolling();
   }
 };
 
